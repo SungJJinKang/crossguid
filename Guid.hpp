@@ -54,13 +54,17 @@ public:
 	Guid(const std::string &fromString);
 	Guid();
 	Guid(const Guid &other);
+	Guid(Guid&& other) noexcept;
 	Guid &operator=(const Guid &other);
+	Guid &operator=(Guid&& other) noexcept;
 	bool operator==(const Guid &other) const;
+	
 	bool operator!=(const Guid &other) const;
 
 	std::string str() const;
 	operator std::string() const;
 	void swap(Guid &other);
+	void move(Guid &&other) noexcept;
 	bool isValid() const;
 
 private:

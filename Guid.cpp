@@ -23,6 +23,7 @@ THE SOFTWARE.
 */
 
 #include <cstring>
+#include <utility>
 #include "Guid.hpp"
 
 #ifdef GUID_LIBUUID
@@ -235,6 +236,13 @@ Guid::Guid() : _bytes{ 0 }
 Guid::Guid(const Guid &other) : _bytes(other._bytes)
 { }
 
+
+
+Guid::Guid(Guid&& other) noexcept
+{
+	this->move(std::move(other));
+}
+
 // set all bytes to zero
 void Guid::zeroify()
 {
@@ -245,6 +253,11 @@ void Guid::zeroify()
 Guid &Guid::operator=(const Guid &other)
 {
 	Guid(other).swap(*this);
+	return *this;
+}
+Guid& Guid::operator=(Guid&& other) noexcept
+{
+	this->move(std::move(other));
 	return *this;
 }
 
@@ -264,6 +277,15 @@ bool Guid::operator!=(const Guid &other) const
 void Guid::swap(Guid &other)
 {
 	_bytes.swap(other._bytes);
+}
+
+void Guid::move(Guid &&other) noexcept
+{
+	this->_bytes = std::move(other._bytes);
+	for (size_t i = 0; i < this->_bytes.size(); i++)
+	{
+		other._bytes[i] = 0;
+	}
 }
 
 // This is the linux friendly implementation, but it could work on other
